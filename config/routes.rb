@@ -1,4 +1,7 @@
 InvoiceApp::Application.routes.draw do
+
+  resources :invoices
+  root :to => 'invoices#index'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
