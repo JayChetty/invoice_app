@@ -1,7 +1,23 @@
-%h1 Invoices#index
-%p 
-	= @client
-	= @invoice.methods.sort
-	= @invoice.status 
-	= @invoices.class 
-	= @contacts
+= @sums
+= params[:status].capitalize
+= @invoices.size
+%br
+%table
+	%tbody
+		%tr
+			%th Type			
+			/%th To
+			%th Due Date
+			%th Paid
+			%th Due
+			%th Total
+		- @invoices.each do |i| 
+			%tr
+				%td= i.type				
+				/%td= i.contact.name
+				%td{ class: ('due' if Date.today > i.due_date)}= i.due_date
+				%td= i.amount_paid
+				%td= i.amount_due
+				%td= i.total
+
+
