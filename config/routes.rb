@@ -2,8 +2,9 @@ InvoiceApp::Application.routes.draw do
 
 
   root :to => 'invoices#index'
-  match 'invoices' => 'invoices#index'
-  match 'invoices/:status' => 'invoices#index'
+  get 'invoices', to: 'invoices#index'
+  get 'invoices/:type/:status', to: 'invoices#index', as:'invoices'
+  get 'invoices/:type/', to: 'invoices#index', as:'invoices_all'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

@@ -1,23 +1,43 @@
-= @sums
-= params[:status].capitalize
-= @invoices.size
-%br
-%table
-	%tbody
-		%tr
-			%th Type			
-			/%th To
-			%th Due Date
-			%th Paid
-			%th Due
-			%th Total
-		- @invoices.each do |i| 
+.row
+	%h1= @title
+	- if params[:type] == 'receivable' 
+		= link_to "Payable Invoices", invoices_all_path('payable')
+	- else
+		= link_to "Receivable Invoices", invoices_all_path('receivable')
+	%br
+	%br
+	.well.well-large
+		%table.table
+			%tbody
+				%tr
+					- @sums.keys.each do |k|
+						%th= k.capitalize
+				%tr 
+					- @sums.values.each do |v|
+						%td= number_with_precision(v, precision: 2)		
+	%br
+	%ul.nav.nav-tabs
+		%li{ class: ('active' unless params[:status]) }= link_to "All", invoices_all_path(params[:type])
+		- @statuses.each do |s|
+			%li{ class: ('active' if params[:status] == s) }= link_to s.capitalize, invoices_path(params[:type], s)
+
+	%br
+	%table.table.table-striped
+		%tbody
 			%tr
-				%td= i.type				
-				/%td= i.contact.name
-				%td{ class: ('due' if Date.today > i.due_date)}= i.due_date
-				%td= i.amount_paid
-				%td= i.amount_due
-				%td= i.total
+				%th Type			
+				%th To
+				%th Due Date
+				%th Paid
+				%th Due
+			
+			- @invoices.each do |i| 
+				%tr
+					%td= i.type				
+					%td= i.contact.name
+					%td{ class: ('due' if Date.today > i.due_date)}= i.due_date
+					%td= number_with_precision(i.amount_paid, precision: 2)		
+					%td= number_with_precision(i.amount_due, precision: 2)		
+
 
 
