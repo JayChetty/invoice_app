@@ -30,6 +30,7 @@
 				%th Due Date
 				%th Paid
 				%th Due
+				%th Total
 			
 			- @invoices.each do |i| 
 				%tr
@@ -37,7 +38,8 @@
 					%td= i.contact.name
 					%td{ class: ('due' if Date.today > i.due_date)}= i.due_date
 					%td= number_with_precision(i.amount_paid, precision: 2)		
-					%td= number_with_precision(i.amount_due, precision: 2)		
+					%td= number_with_precision(i.amount_due, precision: 2)
+					%td= number_with_precision(i.total, precision: 2)	
 
 
 

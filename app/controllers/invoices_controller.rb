@@ -20,7 +20,7 @@ class InvoicesController < ApplicationController
   	   @client = Xeroizer::PrivateApplication.new('KG1EP8X6WHVREFHRAL3MVLPPOKO0MS', 'NIWG1XHRHG6O21CV6Z75ESTLLUTRNT', directory)
        @invoices_alltype = @client.Invoice.all(where: {type: typestring})
     rescue => e
-       flash[:error] =  e.message 
+       flash.now[:error] =  e.message 
        @invoices_alltype = []
     end
     #Filter by status
