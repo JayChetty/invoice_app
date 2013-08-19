@@ -8,6 +8,7 @@
 	%body
 		.container
 			- flash.each do |key, value|
-				.alert= value				
+				/.alert= value				
+				%div{class: "alert alert-#{key}"}= value
 			= yield
 			= debug params

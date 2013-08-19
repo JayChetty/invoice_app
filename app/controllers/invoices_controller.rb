@@ -4,7 +4,6 @@ class InvoicesController < ApplicationController
   def index
 
     @title = "Invoices | #{params[:type].capitalize} "
-
   	@statuses = ['draft', 'submitted', 'authorised', 'paid']
 
     case params[:type]
@@ -16,13 +15,10 @@ class InvoicesController < ApplicationController
 
 
   	directory = Rails.root.join("privatekey.pem");
-    begin
-  	   @client = Xeroizer::PrivateApplication.new('KG1EP8X6WHVREFHRAL3MVLPPOKO0MS', 'NIWG1XHRHG6O21CV6Z75ESTLLUTRNT', directory)
-       @invoices_alltype = @client.Invoice.all(where: {type: typestring})
-    rescue => e
-       flash.now[:error] =  e.message 
-       @invoices_alltype = []
-    end
+
+    @client = Xeroizer::PrivateApplication.new('KG1EP8X6WHVREFHRAL3MVLPPOKO0MS', 'NIWG1XHRHG6O21CV6Z75ESTLLUTRNT', directory)
+    @invoices_alltype = @client.Invoice.all(where: {type: typestring})
+
     #Filter by status
     if params[:status]
   	  @invoices = @invoices_alltype.select {|i| i.status == params[:status].upcase}
@@ -40,15 +36,20 @@ class InvoicesController < ApplicationController
   	end
 
     #Tailor Sums for ouput
-  	@sums['Authorised Due'] = 0.0
+  	@sums['Authorised Overdue'] = 0.0
   	@invoices_alltype.each do |i| 
-	  	@sums['Authorised Due'] += i.amount_due if i.status == 'AUTHORISED' && Date.today > i.due_date
+	  	@sums['Authorised Overdue'] += i.amount_due if i.status == 'AUTHORISED' && Date.today > i.due_date
 	  end
 
     @sums.except!('paid')
 
+  rescue => e
+    flash.now[:error] =  e.message 
+    @invoices = []   
+    @sums = {}
 
   end
+    #    flash.now[:error] =  e.message
 
   def show
   end
