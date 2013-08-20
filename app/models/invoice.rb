@@ -14,7 +14,7 @@ class Invoice < ActiveRecord::Base
  	def self.sync_with_xero
 
  		directory = Rails.root.join("privatekey.pem");
-    client = Xeroizer::PrivateApplication.new('KG1EP8X6WHVREFHRAL3MVLPPOKO0MS', 'NIWG1XHRHG6O21CV6Z75ESTLLUTRNT', directory, rate_limit_sleep: 2)
+    client = Xeroizer::PrivateApplication.new('KG1EP8X6WHVREFHRAL3MVLPPOKO0MS', 'NIWG1XHRHG6O21CV6Z75ESTLLUTRNT', directory), rate_limit_sleep: 2)
     invoices = client.Invoice.all()	
 
     Invoice.destroy_all

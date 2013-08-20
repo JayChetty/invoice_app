@@ -2,13 +2,13 @@ class InvoicesController < ApplicationController
   before_filter :require_type, only: :index 
 
   def index
+    @title = "Invoices | #{params[:type].capitalize}"
+
     if params[:sync] || !Invoice.any? 
       Invoice.sync_with_xero 
       flash[:success] = "Synced succesfully with Xero: #{Invoice.count} Invoices"
     end
-
-    @title = "Invoices | #{params[:type].capitalize} "
-
+    
     case params[:type]
     when 'receivable' 
       typestring = 'ACCREC'
@@ -24,8 +24,10 @@ class InvoicesController < ApplicationController
 
     @status_totals = Invoice.status_totals(typestring)
 
-  # rescue Xeroizer::OAuth::RateLimitExceeded => e
-  #   flash[:error] = e.message
+    rescue Xeroizer::OAuth::RateLimitExceeded => e     
+      flash.now[:error] = e.message
+      @invoices = []
+      @status_totals = {}
 
   end
 
