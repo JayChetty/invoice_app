@@ -27,13 +27,12 @@
 %table.table.table-striped
 	%tbody
 		%tr
-			%th Type			
-			%th To
-			%th Due Date
-			%th Paid
-			%th Due
-			%th Total
-		
+			%th= sortable "invoice_type", "Type"
+			%th= sortable "contact_name", "To"
+			%th= sortable "due_date"
+			%th= sortable "paid"
+			%th= sortable "due"
+
 		- @invoices.each do |i| 
 			%tr
 				%td= i.invoice_type				
@@ -41,7 +40,6 @@
 				%td{ class: ('due' if Date.today > i.due_date)}= i.due_date
 				%td= number_with_precision(i.paid, precision: 2)		
 				%td= number_with_precision(i.due, precision: 2)
-				%td= number_with_precision(i.total, precision: 2)	
 
 
 :javascript
