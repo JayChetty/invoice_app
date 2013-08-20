@@ -23,7 +23,6 @@ class InvoicesController < ApplicationController
     end
 
     @status_totals = Invoice.status_totals(typestring)
-
     rescue Xeroizer::OAuth::RateLimitExceeded => e     
       flash.now[:error] = e.message
       @invoices = []

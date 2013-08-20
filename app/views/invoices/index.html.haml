@@ -6,16 +6,17 @@
 - else
 	= link_to "Receivable Invoices", invoices_all_path('receivable')
 %br
+%div{id: "highChartContainer", min_width:"400px", height:"400px"}
 %br
-.well.well-large
-	%table.table
-		%tbody
-			%tr
-				- @status_totals.keys.each do |k|
-					%th= k.titleize
-			%tr 
-				- @status_totals.values.each do |v|
-					%td= number_with_precision(v, precision: 2)		
+/ .well.well-large
+/ 	%table.table
+/ 		%tbody
+/ 			%tr
+/ 				- @status_totals.keys.each do |k|
+/ 					%th= k.titleize
+/ 			%tr 
+/ 				- @status_totals.values.each do |v|
+/ 					%td= number_with_precision(v, precision: 2)		
 %br
 %ul.nav.nav-tabs
 	%li{ class: ('active' unless params[:status]) }= link_to "All", invoices_all_path(params[:type])
@@ -43,4 +44,51 @@
 				%td= number_with_precision(i.total, precision: 2)	
 
 
+:javascript
+	chart = new Highcharts.Chart({
+		chart: {
+			renderTo: 'highChartContainer',
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false,
+			type: 'bar'
+		},
+		title: {
+			text: 'Potential #{params[:type].titleize}'
+		},
 
+		xAxis: {
+			categories: ['Value']
+		},		
+
+		plotOptions: {
+			series: {
+				stacking: 'normal'
+			}
+		},
+
+		legend: {
+			backgroundColor: '#FFFFFF',
+			reversed: true
+		},		
+
+		series: [{
+			name: 'Draft',
+			data: [#{@status_totals['draft']}]	
+		}, {
+			name: 'Submitted',
+			data: [#{@status_totals['submitted']}]	     
+		}, {
+			name: 'Authorised NotDue',
+			data: [#{@status_totals['authorised']-@status_totals['authorised overdue']}]	     
+		}, {
+			name: 'Authorised OverDue',
+			data: [#{@status_totals['authorised overdue']}]	     
+		}//, {
+			//name: 'Authorised Paid',
+			//data: [#{@status_totals['paid']}]	     
+		//}
+
+		]
+
+	});
