@@ -1,5 +1,7 @@
 .row
 	%h1= @title
+	.btn.pull-right= link_to 'Sync with Xero', params.merge(sync: true)
+	%br
 	- if params[:type] == 'receivable' 
 		= link_to "Payable Invoices", invoices_all_path('payable')
 	- else
@@ -10,15 +12,15 @@
 		%table.table
 			%tbody
 				%tr
-					- @sums.keys.each do |k|
-						%th= k.capitalize
+					- @status_totals.keys.each do |k|
+						%th= k.titleize
 				%tr 
-					- @sums.values.each do |v|
+					- @status_totals.values.each do |v|
 						%td= number_with_precision(v, precision: 2)		
 	%br
 	%ul.nav.nav-tabs
 		%li{ class: ('active' unless params[:status]) }= link_to "All", invoices_all_path(params[:type])
-		- @statuses.each do |s|
+		- Invoice::STATUSES.each do |s|
 			%li{ class: ('active' if params[:status] == s) }= link_to s.capitalize, invoices_path(params[:type], s)
 
 	%br
@@ -34,11 +36,11 @@
 			
 			- @invoices.each do |i| 
 				%tr
-					%td= i.type				
-					%td= i.contact.name
+					%td= i.invoice_type				
+					%td= i.contact_name
 					%td{ class: ('due' if Date.today > i.due_date)}= i.due_date
-					%td= number_with_precision(i.amount_paid, precision: 2)		
-					%td= number_with_precision(i.amount_due, precision: 2)
+					%td= number_with_precision(i.paid, precision: 2)		
+					%td= number_with_precision(i.due, precision: 2)
 					%td= number_with_precision(i.total, precision: 2)	
 
 
