@@ -9,22 +9,13 @@ class InvoicesController < ApplicationController
       flash[:success] = "Synced succesfully with Xero: #{Invoice.count} Invoices"
     end
     
-    case params[:type]
-    when 'receivable' 
-      typestring = 'ACCREC'
-    when 'payable'
-      typestring = 'ACCPAY'
-    end
-
-    #order = params[:sort] || :due_date
-
-    if params[:status]
-      @invoices = Invoice.where(invoice_type: typestring, status: params[:status].upcase).order("#{sort_column} #{sort_direction}")
+    if params[:status] && Invoice::STATUSES.include?(params[:status])
+      @invoices = Invoice.where(invoice_type: @typestring, status: params[:status].upcase).order("#{sort_column} #{sort_direction}")
     else
-      @invoices = Invoice.where(invoice_type: typestring)
+      @invoices = Invoice.where(invoice_type: @typestring).order("#{sort_column} #{sort_direction}")
     end
 
-    @status_totals = Invoice.status_totals(typestring)
+    @status_totals = Invoice.status_totals(@typestring)
     rescue Xeroizer::OAuth::RateLimitExceeded => e     
       flash.now[:error] = e.message
       @invoices = []
@@ -34,7 +25,15 @@ class InvoicesController < ApplicationController
 
   private
     def require_type 
-      redirect_to invoices_all_path('receivable') unless params[:type] 
+      #redirect_to invoices_all_path('receivable') unless %w[receivable payable].include?(params[:type])
+      case params[:type]
+      when 'receivable' 
+        @typestring = 'ACCREC'
+      when 'payable'
+        @typestring = 'ACCPAY'
+      else
+        redirect_to invoices_all_path('receivable')   
+      end
     end
 
     def sort_column
