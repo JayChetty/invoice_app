@@ -15,7 +15,7 @@ describe Invoice do
   		Invoice.should respond_to(:sync_with_xero)
   	end
   	it "should give total sums" do
-  		Invoice.should respond_to(:status_totals)
+  		Invoice.should respond_to(:due_totals)
   	end
   end
 
