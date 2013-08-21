@@ -12,10 +12,10 @@
 / 	%table.table
 / 		%tbody
 / 			%tr
-/ 				- @status_totals.keys.each do |k|
+/ 				- @due_totals.keys.each do |k|
 / 					%th= k.titleize
 / 			%tr 
-/ 				- @status_totals.values.each do |v|
+/ 				- @due_totals.values.each do |v|
 / 					%td= number_with_precision(v, precision: 2)		
 %br
 %ul.nav.nav-tabs
@@ -72,19 +72,19 @@
 
 		series: [{
 			name: 'Draft',
-			data: [#{@status_totals['draft']}]	
+			data: [#{number_with_precision(@due_totals['draft'], precision: 2)}]	
 		}, {
 			name: 'Submitted',
-			data: [#{@status_totals['submitted']}]	     
+			data: [#{number_with_precision(@due_totals['submitted'], precision: 2)}]	     
 		}, {
 			name: 'Authorised NotDue',
-			data: [#{@status_totals['authorised']-@status_totals['authorised overdue']}]	     
+			data: [#{number_with_precision(@due_totals['authorised']-@due_totals['authorised overdue'], precision: 2)}]	     
 		}, {
 			name: 'Authorised OverDue',
-			data: [#{@status_totals['authorised overdue']}]	     
+			data: [#{number_with_precision(@due_totals['authorised overdue'], precision: 2)}]	     
 		}//, {
 			//name: 'Authorised Paid',
-			//data: [#{@status_totals['paid']}]	     
+			//data: [#{number_with_precision(@due_totals['paid'], precision: 2)}]	     
 		//}
 
 		]

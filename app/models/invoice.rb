@@ -33,21 +33,19 @@ class Invoice < ActiveRecord::Base
     end
  	end 
 
- 	def self.status_totals(type)
-  	sums = {} 
-  	STATUSES.each do |s|
+ 	def self.due_totals(type)
+    sums = {}
+  	STATUSES[0..2].each do |s|
   		sums[s] = 0.0
 	  	Invoice.where(invoice_type: type).each do |i| 
-	  		sums[s] += i.total if i.status == s.upcase
+	  		sums[s] += i.due if i.status == s.upcase
 	  	end
   	end 
 
-  	#refactor do in one loop and not find paid
   	sums['authorised overdue'] = 0.0
   	Invoice.where(invoice_type: type).each  do |i| 
 	  	sums['authorised overdue'] += i.due if i.status == 'AUTHORISED' && Date.today > i.due_date
 	  end	
-	  #sums.except!('paid')
 	  sums
  	end
 end

@@ -16,7 +16,7 @@ class InvoicesController < ApplicationController
       @invoices = Invoice.where(invoice_type: @typestring).order("#{sort_column} #{sort_direction}")
     end
 
-    @status_totals = Invoice.status_totals(@typestring)
+    @due_totals = Invoice.due_totals(@typestring)
     # rescue Xeroizer::OAuth::RateLimitExceeded => e     
     #   flash.now[:error] = e.message
     #   @invoices = []
