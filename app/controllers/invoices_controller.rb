@@ -1,15 +1,16 @@
 class InvoicesController < ApplicationController
-  before_filter :require_type, only: :index 
+  before_filter :require_correct_type, only: :index # Require a type to be given otherwise default to receivable
+  before_filter :require_status_correct, only: :index # Status must be valid otherwise show all
   helper_method :sort_column, :sort_direction
   def index
     @title = "Invoices | #{params[:type].capitalize}"
 
-    if params[:sync] || !Invoice.any? 
+    if params[:sync] 
       Invoice.sync_with_xero 
       flash[:success] = "Synced succesfully with Xero: #{Invoice.count} Invoices"
     end
     
-    if params[:status] && Invoice::STATUSES.include?(params[:status])
+    if params[:status]
       @invoices = Invoice.where(invoice_type: @typestring, status: params[:status].upcase).order("#{sort_column} #{sort_direction}")
     else
       @invoices = Invoice.where(invoice_type: @typestring).order("#{sort_column} #{sort_direction}")
@@ -24,8 +25,7 @@ class InvoicesController < ApplicationController
   end
 
   private
-    def require_type 
-      #redirect_to invoices_all_path('receivable') unless %w[receivable payable].include?(params[:type])
+    def require_correct_type 
       case params[:type]
       when 'receivable' 
         @typestring = 'ACCREC'
@@ -34,6 +34,10 @@ class InvoicesController < ApplicationController
       else
         redirect_to invoices_all_path('receivable')   
       end
+    end
+
+    def require_status_correct
+      redirect_to invoices_all_path(params[:type]) if params[:status] && !Invoice::STATUSES.include?(params[:status])  
     end
 
     def sort_column
